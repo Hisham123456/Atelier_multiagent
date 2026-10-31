@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Atelier — Développement multi-agents</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="/static/app.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#main">Aller au contenu</a>
+  <aside class="sidebar">
+    <a class="brand" href="/" aria-label="Atelier, accueil"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M5 31 20 6l15 25M12 21h16M15 31h10"/></svg><span>Atelier<span class="brand-sub">Développement multi-agents</span></span></a>
+    <button id="new-mission" class="new-mission"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Nouvelle mission</button>
+    <div class="history-heading">Tes missions</div>
+    <nav id="history" aria-label="Historique des missions"><p class="sidebar-empty">Ton premier projet commence ici.</p></nav>
+    <div class="sidebar-bottom"><span class="local-dot"></span>Sur ton ordinateur<p>Tu gardes la main sur le projet et les décisions.</p></div>
+  </aside>
+  <main id="main">
+    <header class="page-header"><div><h1>Construire ensemble.</h1><p>Une idée, une équipe spécialisée, des décisions visibles.</p></div><span id="connection" class="connection">Connexion à l’atelier…</span></header>
+    <div id="global-error" class="alert" role="alert" hidden></div>
+    <section class="mission panel" aria-labelledby="mission-title">
+      <div class="section-heading"><h2 id="mission-title">Quelle application veux-tu créer ?</h2><span class="small-tag">Première version locale</span></div>
+      <form id="mission-form">
+        <label for="prompt" class="sr-only">Décris ton application</label>
+        <textarea id="prompt" name="prompt" rows="3" maxlength="8000" minlength="5" required>Créer une liste de tâches : ajouter, terminer et supprimer une tâche, avec conservation des données.</textarea>
+        <div class="form-toolbar"><div class="form-options"><label for="mode">Exécution<select id="mode"><option value="demo">Démonstration</option><option value="live">Modèles OpenAI</option></select></label><label class="checkbox"><input id="plan-only" type="checkbox">Plan uniquement</label></div><button id="launch" class="primary" type="submit">Lancer l’équipe<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button></div>
+      </form>
+      <p id="mode-note" class="mode-note">Scénario fixe de liste de tâches. Les agents sont simulés ; les tests du code produit sont réels. Aucun appel payant.</p>
+      <details id="setup"><summary>Configurer les modèles OpenAI</summary><p>Copie <code>.env.example</code> vers <code>.env</code>, ajoute ta clé dans <code>OPENAI_API_KEY</code>, puis redémarre l’atelier. La clé reste sur ton ordinateur.</p><p id="model-list"></p></details>
+    </section>
+    <section id="liaison" class="liaison" aria-labelledby="liaison-title" hidden>
+      <div class="liaison-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 0 1-8 8H5l-3 3V11a9 9 0 0 1 18 0Z"/><path d="M7 10h8M7 14h5"/></svg></div>
+      <div class="liaison-content"><div class="section-heading"><h2 id="liaison-title">Un point avec toi</h2><span id="question-stage" class="small-tag"></span></div><p id="question-text" class="question-text"></p><p id="question-context" class="muted"></p><form id="answer-form"><label for="answer">Ta précision ou ton avis <span class="muted">(facultatif pour continuer)</span></label><textarea id="answer" rows="2" maxlength="4000" placeholder="Ce qui te convient, ce que tu souhaites ajuster…"></textarea><div id="suggestions" class="suggestions"></div><div class="answer-actions"><button type="submit" name="action" value="continue" class="primary">Continuer</button><button type="submit" name="action" value="revise" class="secondary">Adapter avec ma réponse</button></div><p id="answer-error" role="alert"></p></form></div>
+    </section>
+    <section class="workspace" aria-labelledby="team-title">
+      <div class="workspace-header"><div><h2 id="team-title">L’équipe au travail</h2><p id="run-summary">Le chef prépare le plan. Les spécialistes prennent ensuite le relais.</p></div><div class="run-actions"><span id="run-status" class="status-badge">Prête à démarrer</span><button id="cancel" class="text-button" hidden>Arrêter</button></div></div>
+      <div class="work-grid">
+        <section class="panel team-panel" aria-label="Agents et responsabilités"><div class="subheading"><h3>Coordination & spécialistes</h3><span id="active-count" class="muted">Aucun agent actif</span></div><div id="agents"></div><div class="team-footnote">Chaque agent reçoit son rôle et son contexte. Les tâches indépendantes avancent en parallèle.</div></section>
+        <section class="panel journal-panel" aria-labelledby="journal-title"><div class="subheading"><h3 id="journal-title">Journal de l’équipe</h3><span id="event-count" class="muted">En direct</span></div><ol id="journal"><li class="journal-empty"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M11 9h26v30H11zM17 17h14M17 24h14M17 31h8"/></svg><h4>La conversation commence ici.</h4><p>Tu verras les tâches confiées, les choix de modèles et les points d’étape.</p></li></ol></section>
+      </div>
+    </section>
+    <section id="results" class="results panel" aria-labelledby="results-title" hidden>
+      <div class="section-heading"><h2 id="results-title">Le projet, étape par étape</h2><div class="result-links"><a id="report" class="text-button" href="#">Rapport</a><a id="download" class="secondary" href="#" hidden>Télécharger le projet</a></div></div>
+      <div class="tabs" role="tablist" aria-label="Résultats"><button role="tab" id="tab-plan" aria-selected="true" aria-controls="pane-plan" data-pane="plan">Plan & tâches</button><button role="tab" id="tab-tests" aria-selected="false" aria-controls="pane-tests" data-pane="tests" tabindex="-1">Tests</button><button role="tab" id="tab-security" aria-selected="false" aria-controls="pane-security" data-pane="security" tabindex="-1">Sécurité</button><button role="tab" id="tab-files" aria-selected="false" aria-controls="pane-files" data-pane="files" tabindex="-1">Fichiers</button><button role="tab" id="tab-calls" aria-selected="false" aria-controls="pane-calls" data-pane="calls" tabindex="-1">Modèles & consommation</button></div>
+      <div id="pane-plan" class="tab-pane" role="tabpanel" aria-labelledby="tab-plan"><div id="plan-content"></div></div>
+      <div id="pane-tests" class="tab-pane" role="tabpanel" aria-labelledby="tab-tests" hidden><div id="tests-content"></div></div>
+      <div id="pane-security" class="tab-pane" role="tabpanel" aria-labelledby="tab-security" hidden><div id="security-content"></div></div>
+      <div id="pane-files" class="tab-pane" role="tabpanel" aria-labelledby="tab-files" hidden><div class="file-layout"><div><label for="file-select">Fichier du projet</label><select id="file-select"><option value="">Choisir un fichier</option></select><p class="muted">Après téléchargement et décompression, lance <code>python run_app.py --port 8090</code>.</p></div><pre id="file-content">Sélectionne un fichier pour lire son contenu.</pre></div></div>
+      <div id="pane-calls" class="tab-pane" role="tabpanel" aria-labelledby="tab-calls" hidden><div id="usage-summary" class="usage-summary"></div><div class="table-scroll"><table><caption class="sr-only">Appels des agents et consommation des modèles</caption><thead><tr><th scope="col">Agent</th><th scope="col">Modèle</th><th scope="col">Durée</th><th scope="col">Entrée / sortie</th><th scope="col">État</th></tr></thead><tbody id="calls-body"></tbody></table></div></div>
+    </section>
+    <footer>Atelier local<span>Un chef, des spécialistes, et toi dans la boucle.</span></footer>
+  </main>
+</body>
+</html>
